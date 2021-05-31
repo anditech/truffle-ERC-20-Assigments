@@ -1,8 +1,11 @@
 pragma solidity 0.5.12;
 import "./Ownable.sol";
+import "./Safemath.sol";
 
 
 contract ERC20 is Ownable {
+
+    using SafeMath for uint256;
 
     mapping (address => uint256) private _balances;
 
@@ -45,19 +48,17 @@ contract ERC20 is Ownable {
 
     function mint(address _account, uint256 _amount) public onlyOwner {
         require(_account != address(0)); 
-        _totalSupply = _totalSupply + _amount;
-        _balances[_account] = _balances[_account] + _amount;
-       
+        _totalSupply = _totalSupply.add(_amount);
+        _balances[_account] = _balances[_account].add(_amount);
     }
 
-    function transfer(address _recipient, uint256 _amount) public returns (bool) {
+     function transfer(address _recipient, uint256 _amount) public returns (bool) {
         require(msg.sender != address(0), "Caller can not be Account 0");
         require(_recipient != address(0), "Recipient can not be Addres 0");
         require(_balances[msg.sender] >= _amount, "Insufficient balance");
         
-        _balances[msg.sender] = _balances[msg.sender] - _amount; 
-        _balances[_recipient] = _balances[_recipient] + _amount;
+        _balances[msg.sender] = _balances[msg.sender].sub(_amount); 
+        _balances[_recipient] = _balances[_recipient].add(_amount);
         return true; 
-        
     }
 }
